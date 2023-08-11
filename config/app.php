@@ -190,4 +190,10 @@ return [
         'Datatables' => Yajra\Datatables\Facades\Datatables::class,
     ])->toArray(),
 
+
+    'dimensions' => [
+        'min_width' => env('IMAGE_MIN_WIDTH', 100),
+        'min_height' => env('IMAGE_MIN_HEIGHT', 100),
+    ]
+
 ];

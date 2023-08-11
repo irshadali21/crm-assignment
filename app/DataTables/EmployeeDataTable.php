@@ -8,6 +8,8 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+use Yajra\DataTables\EloquentDataTable;
+
 
 class EmployeeDataTable extends DataTable
 {
@@ -19,13 +21,16 @@ class EmployeeDataTable extends DataTable
      */
     public function dataTable($query)
     {
-        return datatables()
-            ->eloquent($query)
-            ->editColumn('company_id', function ($employee) {
+        $dataTable = new EloquentDataTable($query);
+        $columns = array_column($this->getColumns(), 'data');
+        $dataTable = $dataTable
 
-                return  $employee->company->name  ;
-            })
-            ->addColumn('action', 'employees.datatables_actions');
+            ->addColumn('action', 'employees.datatables_actions')
+            ->rawColumns(array_merge($columns, ['action']));
+
+        return $dataTable;
+
+
     }
 
     /**
@@ -36,7 +41,7 @@ class EmployeeDataTable extends DataTable
      */
     public function query(Employee $model)
     {
-        return $model->newQuery();
+        return $model->newQuery()->with('company');
     }
 
     /**
@@ -47,7 +52,10 @@ class EmployeeDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-            ->columns($this->getColumns());
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->addAction(['width' => '80px', 'printable' => false, 'responsivePriority' => '100'])
+            ;
     }
 
     /**
@@ -57,19 +65,27 @@ class EmployeeDataTable extends DataTable
      */
     protected function getColumns()
     {
-        return [
-
-            Column::make('first_name'),
-            Column::make('last_name'),
-            Column::make('email'),
-            Column::make('phone'),
-            Column::make('company_id')->title('Company'),
-            Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+        $columns = [
+            ['data' => 'first_name',],
+            ['data' => 'last_name',],
+            ['data' => 'email',],
+            ['data' => 'phone',],
+            ['data' => 'company.name', 'title' => 'Company'],
         ];
+
+        return $columns;
     }
 
+
+    /**
+     * Get filename for export.
+     *
+     * @return string
+     */
+    protected function filename(): string
+    {
+        return 'EmployeeDataTable' . time();
+    }
 }
+
+

@@ -1,3 +1,10 @@
+/*
+ * File name: buttons.server-side.js
+ * Last modified: 2021.01.03 at 16:21:01
+
+ * Copyright (c) 2021
+ */
+
 (function ($, DataTable) {
     "use strict";
 
@@ -11,10 +18,10 @@
         } else {
             params.visible_columns = null;
         }
-        
+
         return params;
     };
-    
+
     var _getVisibleColumns = function () {
 
         var visible_columns = [];
@@ -77,7 +84,7 @@
         xhr.send($.param(params));
     };
 
-    var _buildUrl = function(dt, action) {
+    var _buildUrl = function (dt, action) {
         var url = dt.ajax.url() || '';
         var params = dt.ajax.params();
         params.action = action;
@@ -85,7 +92,7 @@
         if (url.indexOf('?') > -1) {
             return url + '&' + $.param(params);
         }
-        
+
         return url + '?' + $.param(params);
     };
 
@@ -116,7 +123,7 @@
             _downloadFromUrl(url, params);
         }
     };
-    
+
     DataTable.ext.buttons.postExcelVisibleColumns = {
         className: 'buttons-excel',
 
@@ -171,7 +178,7 @@
             _downloadFromUrl(url, params);
         }
     };
-    
+
     DataTable.ext.buttons.postCsv = {
         className: 'buttons-csv',
 
@@ -219,7 +226,7 @@
         className: 'buttons-print',
 
         text: function (dt) {
-            return  '<i class="fa fa-print"></i> ' + dt.i18n('buttons.print', 'Print');
+            return '<i class="fa fa-print"></i> ' + dt.i18n('buttons.print', 'Print');
         },
 
         action: function (e, dt, button, config) {

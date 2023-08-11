@@ -31,8 +31,8 @@
     <div class="col-sm-6">
         <div class="form-group"><label class="form-label" for="name">Company</label>
             <div class="form-control-wrap">
-                <select name="company_id" id="company_id" class="form-control">
-                    @if (@$companies)
+                <select class="form-select js-select2"  data-search="on"  name="company_id">
+                    @if ($companies)
                         @foreach ($companies as $company)
                             <option value="{{ $company->id }}" @if (@$employee) @if ($employee->id == $company->id) Selected @endif @endif>{{ $company->name }}</option>
                         @endforeach

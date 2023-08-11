@@ -49,55 +49,85 @@
     </div>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/bundle.js?ver=3.2.1') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.2.1') }}"></script>
-
-
+    {{-- <script src="{{ asset('assets/js/sweetalarts.js') }}"></script> --}}
 
 
 
 
     <script>
+        function confirmDelete(url) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                showLoaderOnConfirm: !0,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: url,
+                        type: 'delete',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        processData: false,
+                        cache: false,
+                        contentType: false,
+                        success: function(response) {
+                            window.LaravelDataTables.dataTableBuilder.ajax.reload()
+                            Swal.fire({
+                                icon: "success",
+                                title: response.message,
+                                showConfirmButton: !1,
+                                timer: 1500
+                            })
+                        },
+                        error: function(response) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "there wasn an error",
+                                showConfirmButton: !1,
+                                timer: 1500
+                            })
+                        }
+                    });
+                }
+            });
+        }
+
+
+
+
         function openModal(action, url = null) {
             $('#m-body').empty()
             $('#modal').modal('show');
-
             var url = url;
             var methode = 'get';
-            if (action == 'delete') {
-                var html =  `<form action="`+url+`" data-method="delete" data-ajax='true' >
-                                <div class="modal-body" id="modal-body">
-                                    <div class="card card-preview">
-                                        <div class="card-inner">
-                                            <div class="preview-block">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <a onclick="closemodal()" class="btn btn-xl btn-dim btn-success">Close</a>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <button type="submit" class="btn btn-xl btn-dim btn-danger">Delete</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>`;
-                $('#modal-title').html('Are You Sure');
-                $('#m-body').html(html);
-            } else {
-                $.ajax({
-                    type: methode,
-                    url: url,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function(respond) {
-                        $('#m-body').append(respond.data);
-                        $('#modal-title').html(respond.title);
-                    }
-                })
-            }
+            $.ajax({
+                type: methode,
+                url: url,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(respond) {
+                    $('#m-body').append(respond.data);
+                    $('#modal-title').html(respond.title);
+                    options ={allowClear: false,
+                        dir: "ltr",
+                        dropdownAutoWidth: false,
+                        minimumResultsForSearch: 1,
+                        placeholder: "",
+                        theme: "default"}
+                    $('.jsjsjsseleec').select2(options);
+                }
+            })
         }
 
         $(document).on('submit', 'form', function(e) {
@@ -123,22 +153,49 @@
                     contentType: false,
                     success: function(response) {
                         if (response.success) {
-
                             $('#m-body').empty()
-                            $('#modal-title').html('Data Saved')
                             $('#modal').modal('hide');
-
+                            Swal.fire({
+                                icon: "success",
+                                title: response.message,
+                                showConfirmButton: !1,
+                                timer: 1500
+                            })
                             if (response.tableReload == true) {
-
                                 window.LaravelDataTables.dataTableBuilder.ajax.reload()
-
                             }
 
                         } else if (response.error) {
-
-                            $('#m-body').empty()
-                            $('#modal-title').html('There was an Error')
-
+                            Swal.fire({
+                                icon: "error",
+                                title: response.message,
+                                showConfirmButton: !1,
+                                timer: 1500
+                            })
+                        }
+                    },
+                    error: function(response) {
+                        if (response.status == 422) {
+                            const errors = response.responseJSON.errors;
+                            for (const key in errors) {
+                                $(`[name="${key}"]`).addClass('border-danger');
+                                if (errors.hasOwnProperty.call(errors, key)) {
+                                    const error = errors[key];
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: error[0],
+                                        showConfirmButton: !1,
+                                        timer: 1500
+                                    })
+                                }
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: response.message,
+                                showConfirmButton: !1,
+                                timer: 1500
+                            })
                         }
 
                     },
