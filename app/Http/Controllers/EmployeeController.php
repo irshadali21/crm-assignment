@@ -7,6 +7,8 @@ use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
 use App\Models\Company;
 use App\DataTables\EmployeeDataTable;
+use Illuminate\Support\Facades\Mail;
+use App\Jobs\EmployeeNotification;
 
 class EmployeeController extends Controller
 {
@@ -42,6 +44,8 @@ class EmployeeController extends Controller
             'phone' => $request['phone'],
         ]);
         $employee->save();
+
+        EmployeeNotification::dispatch($employee);
 
         return response()->json(['message' => 'Employee created successfully', 'tableReload' => true, 'success' => true,], 201);
     }
