@@ -1,6 +1,6 @@
 <form action="{{ route('companies.store') }}" data-method="post" data-ajax='true' enctype="multipart/form-data">
+    <div class="card card-preview">
     <div class="modal-body" id="modal-body">
-        <div class="card card-preview">
             <div class="card-inner">
                 <div class="preview-block">
                     @include('companies.form')

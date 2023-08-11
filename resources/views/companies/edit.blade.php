@@ -1,7 +1,7 @@
 <form action="{{ route('companies.update', $company->id ) }}" data-method="POST" data-ajax=true enctype="multipart/form-data">
     {{ method_field('PUT') }}
+    <div class="card card-preview">
     <div class="modal-body" id="modal-body">
-        <div class="card card-preview">
             <div class="card-inner">
                 <div class="preview-block">
                     @include('companies.form')
