@@ -7,6 +7,7 @@ use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
+use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\Datatable;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,15 +21,16 @@ class CompanyDataTable extends Datatable
      */
     public function dataTable($query)
     {
-
-        $dataTable = datatables()
-            ->eloquent($query)
+        $dataTable = new EloquentDataTable($query);
+        $columns = array_column($this->getColumns(), 'data');
+        $dataTable = $dataTable
             ->editColumn('logo', function ($company) {
                 $logo = $company->logo ?  Storage::url($company->logo) : asset('/images/dummy.png');
-                return '<img src="' . $logo  . '" alt="logo" srcset="">';
+                return '<img src="' . $logo  . '" alt="logo" srcset="" width=100px>';
             })
             ->addColumn('action', 'companies.datatables_actions')
-            ->rawColumns(['logo', 'action']);
+            ->rawColumns(array_merge($columns, ['action']));
+
         return $dataTable;
     }
 
@@ -51,7 +53,10 @@ class CompanyDataTable extends Datatable
     public function html()
     {
         return $this->builder()
-            ->columns($this->getColumns());
+        ->columns($this->getColumns())
+        ->minifiedAjax()
+        ->addAction(['width' => '80px', 'printable' => false, 'responsivePriority' => '100'])
+        ;
     }
 
     /**
@@ -59,24 +64,26 @@ class CompanyDataTable extends Datatable
      *
      * @return array
      */
+
     protected function getColumns()
     {
-        return [
-
-
-            Column::make('name'),
-            Column::make('email'),
-            Column::make('website'),
-            Column::computed('logo')
-                ->exportable(false)
-                ->printable(false)
-                ->searchable(false)
-                ->width(100),
-            Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->width(60)
-                ->addClass('text-center'),
+        $columns = [
+            ['data' => 'name',],
+            ['data' => 'email',],
+            ['data' => 'website',],
+            ['data' => 'logo',],
         ];
+
+        return $columns;
+    }
+
+    /**
+     * Get filename for export.
+     *
+     * @return string
+     */
+    protected function filename(): string
+    {
+        return 'CompanyDataTable' . time();
     }
 }

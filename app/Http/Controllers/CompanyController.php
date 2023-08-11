@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
-use App\Http\Requests\StoreCompanyRequest;
-use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Requests\CompanyRequest;
 use App\DataTables\CompanyDataTable;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
@@ -31,7 +29,7 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCompanyRequest $request)
+    public function store(CompanyRequest $request)
     {
         if ($request->hasFile('logo')) {
             $logo = $request->file('logo');
@@ -70,7 +68,7 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCompanyRequest $request, Company $company)
+    public function update(CompanyRequest $request, Company $company)
     {
         $company->name = $request->name;
         $request->email ? $company->email = $request->email : '';

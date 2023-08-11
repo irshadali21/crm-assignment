@@ -44,7 +44,6 @@
 
 
 
-
                     <div class="nk-block nk-block-lg">
 
                         <div class="card card-preview">
@@ -63,6 +62,9 @@
 
 @endsection
 @push('scripts')
+<script>
+    $('#dataTableBuilder').DataTable().destroy();
+        </script>
     <script>
         setTimeout(() => {
             var parentDiv = document.querySelector('.dataTables_filter').parentNode;

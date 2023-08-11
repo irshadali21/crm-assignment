@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Http\Requests\StoreEmployeeRequest;
-use App\Http\Requests\UpdateEmployeeRequest;
+use App\Http\Requests\EmployeeRequest;
 use App\Models\Company;
 use App\DataTables\EmployeeDataTable;
-use Illuminate\Support\Facades\Mail;
 use App\Jobs\EmployeeNotification;
 
 class EmployeeController extends Controller
@@ -33,7 +31,7 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEmployeeRequest $request)
+    public function store(EmployeeRequest $request)
     {
 
         $employee = new Employee([
@@ -72,7 +70,7 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateEmployeeRequest $request, Employee $employee)
+    public function update(EmployeeRequest $request, Employee $employee)
     {
         $employee->first_name = $request->first_name;
         $employee->last_name = $request->last_name;
