@@ -40,7 +40,7 @@ class EmployeeNotification extends Notification
         return (new MailMessage)->view(
             'email.new_employee',
             ['emplyee' => $this->employee]
-        )->subject('new Employee registed');
+        )->subject('New Employee Registed');
     }
 
     /**
