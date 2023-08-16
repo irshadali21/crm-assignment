@@ -7,7 +7,8 @@ use App\Http\Requests\CompanyRequest;
 use App\DataTables\CompanyDataTable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-
+use App\Mail\OrderShipped;
+use Illuminate\Support\Facades\Mail;
 class CompanyController extends Controller
 {
     /**
@@ -103,5 +104,12 @@ class CompanyController extends Controller
     {
         $company->delete();
         return response()->json(['message' => 'Company Deleted successfully', 'tableReload' => true, 'success' => true,], 201);
+    }
+
+    public function sendDemoMail()
+    {
+        Mail::to('m.irshad.ali21@gmail.com')->send(new OrderShipped());
+
+        dd("Mail has been sent successfully");
     }
 }

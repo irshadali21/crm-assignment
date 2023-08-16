@@ -34,5 +34,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('employees', EmployeeController::class);
 
 });
-
+Route::get('send-mail', [CompanyController::class, 'sendDemoMail']);
 require __DIR__.'/auth.php';
