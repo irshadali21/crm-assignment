@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/dashlite.css?ver=3.2.1') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/theme.css?ver=3.2.1') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    @stack('3rd-party-css')
 </head>
 
 
@@ -49,12 +49,8 @@
     </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/bundle.js?ver=3.2.1') }}"></script>
     <script src="{{ asset('assets/js/scripts.js?ver=3.2.1') }}"></script>
-    {{-- <script src="{{ asset('assets/js/sweetalarts.js') }}"></script> --}}
-
-
 
 
     <script>
@@ -90,12 +86,8 @@
                             })
                         },
                         error: function(response) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "there wasn an error",
-                                showConfirmButton: !1,
-                                timer: 1500
-                            })
+                            toastr.clear()
+                            Toast('there wasn an error', "error")
                         }
                     });
                 }
@@ -119,12 +111,14 @@
                 success: function(respond) {
                     $('#m-body').append(respond.data);
                     $('#modal-title').html(respond.title);
-                    options ={allowClear: false,
+                    options = {
+                        allowClear: false,
                         dir: "ltr",
                         dropdownAutoWidth: false,
                         minimumResultsForSearch: 1,
                         placeholder: "",
-                        theme: "default"}
+                        theme: "default"
+                    }
                     $('.jsjsjsseleec').select2(options);
                 }
             })
@@ -165,13 +159,11 @@
                                 window.LaravelDataTables.dataTableBuilder.ajax.reload()
                             }
 
-                        } else if (response.error) {
-                            Swal.fire({
-                                icon: "error",
-                                title: response.message,
-                                showConfirmButton: !1,
-                                timer: 1500
-                            })
+                        } else if (!response.success) {
+                            var error123 = response.message.errorInfo
+                            console.log(error123)
+                            toastr.clear()
+                            Toast(response.message, "error")
                         }
                     },
                     error: function(response) {
@@ -181,21 +173,14 @@
                                 $(`[name="${key}"]`).addClass('border-danger');
                                 if (errors.hasOwnProperty.call(errors, key)) {
                                     const error = errors[key];
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: error[0],
-                                        showConfirmButton: !1,
-                                        timer: 1500
-                                    })
+                                    Toast(error[0], "error")
+
                                 }
                             }
                         } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: response.message,
-                                showConfirmButton: !1,
-                                timer: 1500
-                            })
+                            toastr.clear()
+                            Toast(response.message, "error")
+
                         }
 
                     },
@@ -213,8 +198,47 @@
             $('#modal').modal('hide');
 
         }
+
+        function fasdasd(e, n) {
+                return Object.keys(n).forEach(function(t) {
+                    e[t] = n[t]
+                }), e
+            }
+
+        Toast = function(t, e, n) {
+            var a = "info" === (e = e || "info") ? "ni ni-info-fill" : "success" === e ? "ni ni-check-circle-fill" : "error" === e ?
+                "ni ni-cross-circle-fill" : "warning" === e ? "ni ni-alert-fill" : "",
+                i = {
+                    position: "bottom-right",
+                    ui: "",
+                    icon: "auto",
+                    clear: !1
+                },
+                n = n ? f(i, n) : i;
+            n.position = "toast-bottom-right",
+                n.icon = "auto" === n.icon ? a : n.icon || "",
+                n.ui = n.ui ? " " + n.ui : "",
+                i = "" !== n.icon ? '<span class="toastr-icon"><em class="icon ' + n.icon + '"></em></span>' : "",
+                "" !== (t = "" !== t ? i +
+                    '<div class="toastr-text">' + t + "</div>" : "") && (!0 === n.clear && toastr.clear(),
+                    a = {
+                        closeButton: !0,
+                        debug: !1,
+                        newestOnTop: !1,
+                        progressBar: !1,
+                        positionClass: n.position + n.ui,
+                        closeHtml: '<span class="btn-trigger">Close</span>',
+                        preventDuplicates: !0,
+                        showDuration: "1500",
+                        hideDuration: "1500",
+                        timeOut: "2000",
+                        toastClass: "toastr",
+                        extendedTimeOut: "3000"
+                    },
+                    toastr.options = fasdasd(a, n), toastr[e](t))
+        }
     </script>
-    @stack('scripts')
+    @stack('3rd-party-js')
 
 
 </body>

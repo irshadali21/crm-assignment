@@ -49,7 +49,17 @@
                         <div class="card card-preview">
                             <div class="card-inner">
 
-                                @include('employees.table')
+                                @push('3rd-party-css')
+                                    @include('layouts.datatables_css')
+                                @endpush
+
+                                {!! $dataTable->table(['width' => '100%']) !!}
+
+                                @push('3rd-party-js')
+                                    @include('layouts.datatables_js')
+                                    {!! $dataTable->scripts() !!}
+                                @endpush
+
 
                             </div>
                         </div>
