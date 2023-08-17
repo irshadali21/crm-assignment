@@ -50,7 +50,17 @@
                         <div class="card card-preview">
                             <div class="card-inner">
 
-                                @include('companies.table')
+                                @push('3rd-party-css')
+                                    @include('layouts.datatables_css')
+                                @endpush
+
+                                {!! $dataTable->table(['width' => '100%']) !!}
+
+                                @push('3rd-party-js')
+                                    @include('layouts.datatables_js')
+                                    {!! $dataTable->scripts() !!}
+                                @endpush
+
 
                             </div>
                         </div>
@@ -59,8 +69,6 @@
             </div>
         </div>
     </div>
-
-
 @endsection
 @push('scripts')
     <script>
@@ -76,11 +84,5 @@
                 }
             });
         }, 1000);
-
-
-
-
-
-        
     </script>
 @endpush

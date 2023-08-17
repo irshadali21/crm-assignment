@@ -6,7 +6,9 @@ use App\Models\Company;
 use App\Http\Requests\CompanyRequest;
 use App\DataTables\CompanyDataTable;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Http\Request;
+use App\Mail\OrderShipped;
+use Illuminate\Support\Facades\Mail;
 class CompanyController extends Controller
 {
     /**
@@ -36,15 +38,19 @@ class CompanyController extends Controller
             $logoPath = $logo->store('company_logo', 'public');
             $request['logo_path'] = $logoPath;
         }
-        $company = new Company([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'logo' => $request['logo_path'] ?? null,
-            'website' => $request['website'] ?  $request['website'] : null,
-        ]);
-        $company->save();
+        try {
+            $company = new Company([
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'logo' => $request['logo_path'] ?? null,
+                'website' => $request['website'] ?  $request['website'] : null,
+            ]);
+            $company->save();
 
-        return response()->json(['message' => 'Company created successfully', 'tableReload' => true, 'success' => true,], 201);
+            return response()->json(['message' => 'Company created successfully', 'tableReload' => true, 'success' => true,], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'success' => false]);
+        }
     }
 
     /**
@@ -74,17 +80,21 @@ class CompanyController extends Controller
         $request->email ? $company->email = $request->email : '';
         $request->website ?  $company->website = $request->website : '';
 
-        if ($request->hasFile('logo')) {
-            if ($company->logo) {
-                Storage::delete($company->logo);
+        try {
+            if ($request->hasFile('logo')) {
+                if ($company->logo) {
+                    Storage::delete($company->logo);
+                }
+                $logo = $request->file('logo');
+                $logoPath = $logo->store('public/company_logo');
+                $company->logo = $logoPath;
             }
-            $logo = $request->file('logo');
-            $logoPath = $logo->store('public/company_logo');
-            $company->logo = $logoPath;
-        }
-        $company->save();
+            $company->save();
 
-        return response()->json(['message' => 'Company Updated successfully', 'tableReload' => true, 'success' => true,], 201);
+            return response()->json(['message' => 'Company Updated successfully', 'tableReload' => true, 'success' => true,], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'success' => false]);
+        }
     }
 
     /**
@@ -94,6 +104,12 @@ class CompanyController extends Controller
     {
         $company->delete();
         return response()->json(['message' => 'Company Deleted successfully', 'tableReload' => true, 'success' => true,], 201);
+    }
 
+    public function sendDemoMail()
+    {
+        Mail::to('m.irshad.ali21@gmail.com')->send(new OrderShipped());
+
+        dd("Mail has been sent successfully");
     }
 }

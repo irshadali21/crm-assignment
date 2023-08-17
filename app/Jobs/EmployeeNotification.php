@@ -10,6 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Notifications\EmployeeNotification as EmployeeNotificationQueue;
 use App\Models\Employee;
+use App\Mail\OrderShipped;
+use Illuminate\Support\Facades\Mail;
 
 class EmployeeNotification implements ShouldQueue
 {
@@ -37,5 +39,16 @@ class EmployeeNotification implements ShouldQueue
     {
         $company = $this->employee->company;
         $company->notify(New EmployeeNotificationQueue($this->employee));
+
+        // $email = 'positronx@gmail.com';
+
+        // $maildata = [
+        //     'title' => 'Laravel Mail Sending Example with Markdown',
+        //     'url' => 'https://www.positronx.io'
+        // ];
+
+        // Mail::to($email)->send(new OrderShipped($maildata));
+
     }
 }
+

@@ -20,7 +20,7 @@
                                 <table class="email-header">
                                     <tbody>
                                         <tr>
-                                            <td class="text-center pb-4"><a href="#"><img class="email-logo" src="{{ asset('images/logo-dark2x.png') }}"
+                                            <td class="text-center pb-4"><a href="#"><img class="email-logo" src="{{ asset('images/logo-dark.png') }}"
                                                         alt="logo"></a>
                                                 <p class="email-title">Notification for new Employee registration</p>
                                             </td>
@@ -33,7 +33,7 @@
                                             <td class="p-3 p-sm-5">
                                                 <p><strong>Hello </strong>,</p>
                                                 <p>New Employee Register</p>
-                                                <p>Employee Name : {{ $emplyee->name }}</p>
+                                                <p>Employee Name : {{ $emplyee->first_name }}  {{ $emplyee->last_name }}</p>
                                                 <p class="mt-4">---- <br> Regards<br>CRM Team</p>
                                             </td>
                                         </tr>

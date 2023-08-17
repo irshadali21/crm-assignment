@@ -33,19 +33,22 @@ class EmployeeController extends Controller
      */
     public function store(EmployeeRequest $request)
     {
+        try {
+            $employee = new Employee([
+                'first_name' => $request['first_name'],
+                'last_name' => $request['last_name'],
+                'company_id' => $request['company_id'],
+                'email' => $request['email'],
+                'phone' => $request['phone'],
+            ]);
+            $employee->save();
 
-        $employee = new Employee([
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'company_id' => $request['company_id'],
-            'email' => $request['email'],
-            'phone' => $request['phone'],
-        ]);
-        $employee->save();
+            EmployeeNotification::dispatch($employee);
 
-        EmployeeNotification::dispatch($employee);
-
-        return response()->json(['message' => 'Employee created successfully', 'tableReload' => true, 'success' => true,], 201);
+            return response()->json(['message' => 'Employee created successfully', 'tableReload' => true, 'success' => true,], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'success' => false]);
+        }
     }
 
     /**
@@ -72,16 +75,18 @@ class EmployeeController extends Controller
      */
     public function update(EmployeeRequest $request, Employee $employee)
     {
-        $employee->first_name = $request->first_name;
-        $employee->last_name = $request->last_name;
-        $request->company_id ? $employee->company_id = $request->company_id : '';
-        $request->email ? $employee->email = $request->email : '';
-        $request->phone ? $employee->phone = $request->phone : '';
+        try {
+            $employee->first_name = $request->first_name;
+            $employee->last_name = $request->last_name;
+            $request->company_id ? $employee->company_id = $request->company_id : '';
+            $request->email ? $employee->email = $request->email : '';
+            $request->phone ? $employee->phone = $request->phone : '';
+            $employee->save();
 
-
-        $employee->save();
-
-        return response()->json(['message' => 'Employee Updated successfully', 'tableReload' => true, 'success' => true,], 201);
+            return response()->json(['message' => 'Employee Updated successfully', 'tableReload' => true, 'success' => true,], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'success' => false]);
+        }
     }
 
     /**
